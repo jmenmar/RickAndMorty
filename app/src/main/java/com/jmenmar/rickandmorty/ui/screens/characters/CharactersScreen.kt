@@ -91,7 +91,12 @@ fun CharacterSearcher(
             )
         }
 
-        IconButton(onClick = { viewModel.getCharacters() }) {
+        IconButton(
+            onClick = {
+                viewModel.setSearch("")
+                viewModel.getCharacters()
+            }
+        ) {
             Icon(
                 imageVector = Icons.Default.Home,
                 contentDescription = "Search"
