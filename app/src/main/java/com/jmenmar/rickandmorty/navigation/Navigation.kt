@@ -10,14 +10,24 @@ import androidx.navigation.navArgument
 import com.jmenmar.rickandmorty.core.Constants.CHAR_KEY
 import com.jmenmar.rickandmorty.ui.screens.character.CharacterScreen
 import com.jmenmar.rickandmorty.ui.screens.characters.CharactersScreen
+import com.jmenmar.rickandmorty.ui.screens.splash.SplashScreen
 
 @Composable
 fun Navigation(navController: NavHostController) {
     NavHost(
         navController = navController,
         route = "ROOT",
-        startDestination = MainScreen.Characters.route
+        startDestination = MainScreen.Splash.route
     ) {
+        composable(MainScreen.Splash.route) {
+            SplashScreen(
+                navigateToCharacters = {
+                    navController.popBackStack()
+                    navController.navigate(MainScreen.Characters.route)
+                }
+            )
+        }
+
         composable(route = MainScreen.Characters.route) {
             CharactersScreen(
                 navigateToDetail = { id ->
@@ -41,6 +51,8 @@ sealed class MainScreen(
     val route: String,
     val arguments: List<NamedNavArgument> = listOf()
 ) {
+    data object Splash: MainScreen(route = "SPLASH")
+
     data object Characters: MainScreen(route = "CHARACTERS")
 
     data object CharacterDetail : MainScreen(
