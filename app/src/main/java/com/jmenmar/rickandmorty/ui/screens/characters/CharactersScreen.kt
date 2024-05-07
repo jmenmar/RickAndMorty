@@ -1,6 +1,7 @@
 package com.jmenmar.rickandmorty.ui.screens.characters
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -17,6 +18,7 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -42,6 +44,7 @@ fun CharactersScreen(
 ) {
     val characters by viewModel.characters.collectAsState()
     val search by viewModel.search.collectAsState()
+    val loading by viewModel.loading.collectAsState()
 
     Surface {
         Column(
@@ -61,6 +64,7 @@ fun CharactersScreen(
                 info = characters?.info
             )
             CharactersContent(
+                loading = loading,
                 characters = characters,
                 onClick = navigateToDetail
             )
@@ -144,22 +148,33 @@ fun CharactersPreviousNext(
 
 @Composable
 fun CharactersContent(
+    loading: Boolean,
     characters: CharactersResponse?,
     onClick: (Int) -> Unit
 ) {
-    LazyVerticalGrid(
-        modifier = Modifier.fillMaxWidth(),
-        columns = GridCells.Adaptive(128.dp),
-        contentPadding = PaddingValues(vertical = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        content = {
-            items(characters?.results.orEmpty()) { character ->
-                CharacterCard(
-                    character = character,
-                    onClick = onClick
-                )
-            }
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        if (loading) {
+            CircularProgressIndicator()
+        } else {
+            LazyVerticalGrid(
+                modifier = Modifier.fillMaxWidth(),
+                columns = GridCells.Adaptive(128.dp),
+                contentPadding = PaddingValues(vertical = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                content = {
+                    items(characters?.results.orEmpty()) { character ->
+                        CharacterCard(
+                            character = character,
+                            onClick = onClick
+                        )
+                    }
+                }
+            )
         }
-    )
+    }
+
 }

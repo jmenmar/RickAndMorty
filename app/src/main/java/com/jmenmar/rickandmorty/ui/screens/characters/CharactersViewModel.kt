@@ -14,6 +14,9 @@ import javax.inject.Inject
 class CharactersViewModel @Inject constructor(
     private val getAllCharactersUseCase: GetAllCharactersUseCase
 ): ViewModel() {
+    private val _loading = MutableStateFlow(false)
+    var loading = _loading.asStateFlow()
+
     private val _characters = MutableStateFlow<CharactersResponse?>(null)
     var characters = _characters.asStateFlow()
 
@@ -33,8 +36,10 @@ class CharactersViewModel @Inject constructor(
         val pageValue = filters?.substringAfter("page=")?.substringBefore("&")?.toInt()
 
         viewModelScope.launch {
+            _loading.value = true
             getAllCharactersUseCase.invoke(nameValue, pageValue).collect { response ->
                 _characters.value = response
+                _loading.value = false
             }
         }
     }
